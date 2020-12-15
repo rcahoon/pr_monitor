@@ -46,26 +46,26 @@ def _perform_github_api_call(api, data, request_method = requests.post):
                                         headers=_get_github_api_headers(TOKEN),
                                         json=data)
     except requests.exceptions.RequestException as e:
-        logging.exception("Error requesting {}".format(uri))
+        print("Error requesting {}".format(uri))
         return None
 
     try:
         output = request_result.json()
     except ValueError:
-        logging.info("The response body is not a json: \"{}\"".format(str(request_result)))
+        print("The response body is not a json: \"{}\"".format(str(request_result)))
         output = {}
 
     if request_result.status_code > 299:
-        logging.error("Github request error code: {}, the response is: {}, the json body is: {}".format(
+        print("Github request error code: {}, the response is: {}, the json body is: {}".format(
             str(request_result.status_code), str(request_result), str(output)))
         if 'errors' in list(output.keys()):
             for error in output['errors']:
-                logging.error(str(error))
+                print(str(error))
         return None
     elif 200 <= request_result.status_code and request_result.status_code < 300:
         return output
     else:
-        logging.error("Unknown error: \nresponse: {} \nbody: {}".format(str(request_result), str(output)))
+        print("Unknown error: \nresponse: {} \nbody: {}".format(str(request_result), str(output)))
     return None
 
 

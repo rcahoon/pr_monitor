@@ -17,6 +17,9 @@ SERVER_PORT = 3030
 FILE_PREFIXES = [
 ]
 
+EXCLUDED_PREFIXES = [
+]
+
 _GITHUB_PROJECT_URI = "https://api.github.com/repos/rcahoon/pr_monitor/pulls"
 
 TOKEN = "<TOKEN>"
@@ -140,8 +143,8 @@ def run_server(db, user_db, db_lock):
                     matching_files = [
                         f
                         for f in value['files']
-                        for prefix in FILE_PREFIXES
-                        if f.startswith(prefix)
+                        if any(f.startswith(prefix) for prefix in FILE_PREFIXES)
+                        and not any(f.startswith(prefix) for prefix in EXCLUDED_PREFIXES)
                     ]
                     if not matching_files:
                         continue

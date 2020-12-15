@@ -20,7 +20,7 @@ FILE_PREFIXES = [
 EXCLUDED_PREFIXES = [
 ]
 
-_GITHUB_PROJECT_URI = "https://api.github.com/repos/rcahoon/pr_monitor/pulls"
+_GITHUB_PROJECT_URI = "https://api.github.com/repos/rcahoon/pr_monitor"
 
 TOKEN = "<TOKEN>"
 
@@ -39,7 +39,7 @@ def _get_github_api_headers(token):
 
 
 def _perform_github_api_call(api, data, request_method = requests.post):
-    uri = '{uri}{api}'.format(uri=_GITHUB_PROJECT_URI, api=api)
+    uri = os.path.join(_GITHUB_PROJECT_URI, api)
     print(uri, data)
     try:
         request_result = request_method(uri,

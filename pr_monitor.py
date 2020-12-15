@@ -94,6 +94,8 @@ def list_pull_requests(only_open=False):
     api = "pulls?sort=updated&direction=desc"
     if only_open:
         api += "&state=open"
+    else:
+        api += "&state=all"
     return _paginated_github_api_call(
         api,
         None,
@@ -154,6 +156,8 @@ def run_server(db, user_db, db_lock):
                     item_title = '{} {}'.format(key, value['title'])
                     if user_db.get(key, {}).get('visited', TIME_MIN) < value['updated']:
                         item_title = '<b>{}</b>'.format(item_title)
+                    elif value.get('state') == 'closed':
+                        continue
                     else:
                         item_title = '<i>{}</i>'.format(item_title)
                     item_content += '<a href="{}">{}</a>'.format(value['url'], item_title)
@@ -223,7 +227,7 @@ def main():
             else:
                 new_prs = itertools.takewhile(
                     lambda pr: dateutil.parser.parse(pr['updated_at']) > last_update,
-                    list_pull_requests(only_open=True),
+                    list_pull_requests(only_open=False),
                 )
             new_last_update = None
             for pr in new_prs:
@@ -239,6 +243,7 @@ def main():
                         'description': pr['body'],
                         'updated': updated_at,
                         'files': pr_files,
+                        'state': pr['state'],
                     }
             if new_last_update is not None:
                 with db_lock:

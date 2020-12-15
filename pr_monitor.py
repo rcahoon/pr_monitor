@@ -131,6 +131,7 @@ def run_server(db, user_db, db_lock):
                     pr_state = user_db.get(key, {})
                     pr_state['visited'] = visited_at
                     user_db[key] = pr_state
+                    user_db.sync()
 
                 self.send_response(303)
                 self.send_header('Location', '/')
